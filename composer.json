@@ -1,0 +1,35 @@
+{
+    "name": "ratza/guzzle-profiler-bundle",
+    "description": "Symfony Bundle that integrates nice UI in the profiler panel for the Guzzle Client",
+    "keywords": ["guzzle", "Symfony2", "profiler"],
+    "homepage": "https://github.com/ratza/guzzle-profiler-bundle",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ion Marusic",
+            "email": "ion.marusic@gmail.com"
+        },
+        {
+            "name": "Ludovic Fleury",
+            "email": "ludo.fleury@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "guzzle/guzzle": "4.* | 5.*",
+        "symfony/web-profiler-bundle": "~2.3",
+        "symfony/http-foundation": "~2.3",
+        "symfony/http-kernel": "~2.3",
+        "symfony/config": "~2.3",
+        "symfony/dependency-injection": "~2.3"
+    },
+    "autoload": {
+        "psr-0": { "": "src/" }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.x-dev"
+        }
+    }
+}
