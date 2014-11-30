@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit colors="true" bootstrap="bootstrap.php">
+    <testsuites>
+        <testsuite name="GuzzleProfilerBundle Test Suite">
+            <directory>src/Ratza/GuzzleProfilerBundle/Tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory>./</directory>
+            <exclude>
+                <directory>vendor</directory>
+                <directory>src/Ratza/GuzzleProfilerBundle/Tests</directory>
+                <directory>src/Ratza/GuzzleProfilerBundle/Resources</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>

@@ -1,0 +1,9 @@
+parameters:
+    ratza_guzzle.data_collection.guzzle.class: Ratza\GuzzleProfilerBundle\DataCollector\GuzzleDataCollector
+
+services:
+    ratza_guzzle.data_collection.guzzle:
+        class: %ratza_guzzle.data_collection.guzzle.class%
+        arguments: [@ratza_guzzle.client.profiler]
+        tags:
+            - { name: data_collector, template: "RatzaGuzzleProfilerBundle:Collector:guzzle", id: guzzle }

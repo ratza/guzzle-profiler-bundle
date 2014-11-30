@@ -1,0 +1,19 @@
+parameters:
+    ratza_guzzle.client.logger.class: GuzzleHttp\Subscriber\Log\LogSubscriber
+    ratza_guzzle.client.profiler.class: GuzzleHttp\Subscriber\History
+
+    ratza_guzzle.client.logger.format: Requested "{host}" {method} "{resource}"
+    ratza_guzzle.client.profiler.limit: 10
+
+services:
+    ratza_guzzle.client.logger:
+        class: %ratza_guzzle.client.logger.class%
+        arguments:
+            - @logger
+            - %ratza_guzzle.client.logger.format%
+        tags:
+            - { name: monolog.logger, channel: guzzle }
+
+    ratza_guzzle.client.profiler:
+        class: %ratza_guzzle.client.profiler.class%
+        arguments: [%ratza_guzzle.client.profiler.limit%]
