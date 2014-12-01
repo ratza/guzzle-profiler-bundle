@@ -11,6 +11,7 @@ use GuzzleHttp\Subscriber\History;
 
 use GuzzleHttp\Message\RequestInterface as GuzzleRequestInterface;
 use GuzzleHttp\Message\ResponseInterface as GuzzleResponseInterface;
+use Ratza\GuzzleProfilerBundle\Interfaces\LoggerMessageInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
@@ -70,16 +71,22 @@ class GuzzleDataCollector extends DataCollector
         };
 
         foreach ($this->profiler as $call) {
-            $request = $this->collectRequest($call);
-            $response = $this->collectResponse($call);
-            $time = $this->collectTime($call);
-            $error = $call->getResponse()->isError();
+            $request = $call['sent_request'];
+            $response = $call['response'];
+            $requestData = $this->collectRequest($request);
+            $responseData = $this->collectResponse($response);
+            $time = $this->collectTime($request, $response);
+            /** @var GuzzleResponseInterface $response */
+            $error =
+                null === $call['response'] ||
+                100 > $response->getStatusCode() ||
+                400 <= $response->getStatusCode();
 
-            $aggregate($request, $response, $time, $error);
+            $aggregate($requestData, $responseData, $time, $error);
 
             $data['calls'][] = array(
-                'request' => $request,
-                'response' => $response,
+                'request' => $requestData,
+                'response' => $responseData,
                 'time' => $time,
                 'error' => $error
             );
@@ -155,8 +162,17 @@ class GuzzleDataCollector extends DataCollector
      *
      * @return array
      */
-    private function collectResponse(GuzzleResponseInterface $response)
+    private function collectResponse(GuzzleResponseInterface $response = null)
     {
+        if ($response === null) {
+            return array(
+                'statusCode'    => null,
+                'reasonPhrase'  => null,
+                'headers'       => null,
+                'body'          => null
+            );
+        }
+
         return array(
             'statusCode'   => $response->getStatusCode(),
             'reasonPhrase' => $response->getReasonPhrase(),
@@ -168,17 +184,21 @@ class GuzzleDataCollector extends DataCollector
     /**
      * Collect time for a Guzzle request
      *
-     * @param GuzzleRequestInterface $request
+     * @param GuzzleRequestInterface  $request
+     * @param GuzzleResponseInterface $response
      *
      * @return array
      */
-    private function collectTime(GuzzleRequestInterface $request)
+    private function collectTime(GuzzleRequestInterface $request, GuzzleResponseInterface $response = null)
     {
-//        $response = $request->getResponse();
+        if (!($request instanceof LoggerMessageInterface) || !($response instanceof LoggerMessageInterface)) {
+            $time = 0;
+        } else {
+            $time = null !== $response ? $response->getTimestamp() - $request->getTimestamp() : 0;
+        }
 
         return array(
-            'total'      => 0,//$response->getInfo('total_time'),
-            'connection' => 0//$response->getInfo('connect_time')
+            'total' => $time,
         );
     }
 }
